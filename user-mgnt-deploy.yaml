@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: resourcesmanagement-deployment
+  namespace: test-ahyeha
+spec:
+  selector:
+    matchLabels:
+      app: resourcesmanagement
+  replicas: 1
+  template:
+    metadata:
+      namespace: test-ahyeha
+      labels:
+        app: resourcesmanagement
+    spec:
+      containers:
+      - name: resourcesmanagement
+    # enter the path to your image, be sure to include the correct region   prefix
+        image: jed.ocir.io/axulzqeiw39c/resourcesmanagement:test
+        ports:
+        - containerPort: 5057        
+        env:
+          - name: JAVA_OPTS
+            value: -Dspring.profiles.active=prod,api-docs,no-liquibase
+          - name: MYSQL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: password
+                name: mysql-user-trs
+          - name: SPRING_DATASOURCE_URL
+            value: jdbc:mysql://rsmg:$(MYSQL_PASSWORD)@mysql-read/resourcesmanagement_db?useUnicode=true&characterEncoding=utf8&useLegacyDatetimeCode=false&serverTimezone=UTC&createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false      
+      imagePullSecrets:
+    # enter the name of the secret you created
+      - name: ocirsecrettest
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: resourcesmanagements-service
+  namespace: test-ahyeha
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 5057
+  selector:
+    app: resourcesmanagement
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: resourcesmanagements-ingress-path
+  namespace: test-ahyeha
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  tls:
+    - hosts:
+        - "dev.ahyeha.com"
+      secretName: apps-tls
+  rules:
+    - host: "dev.ahyeha.com"
+      http:
+        paths:
+          - path: /resourcesmanagements(/|$)(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: resourcesmanagements-service
+                port:
+                  number: 80
