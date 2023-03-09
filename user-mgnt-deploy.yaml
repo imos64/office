@@ -27,7 +27,7 @@ spec:
             valueFrom:
               secretKeyRef:
                 key: password
-                name: mysql-user-trs
+                name: mysql-trs-pass
           - name: SPRING_DATASOURCE_URL
             value: jdbc:mysql://rsmg:$(MYSQL_PASSWORD)@mysql-read/resourcesmanagement_db?useUnicode=true&characterEncoding=utf8&useLegacyDatetimeCode=false&serverTimezone=UTC&createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false      
       imagePullSecrets:
