@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: resourcesmanagement-deployment
-  namespace: test-ahyeha
+  namespace: dev-ahyeha
 spec:
   selector:
     matchLabels:
@@ -10,7 +10,7 @@ spec:
   replicas: 1
   template:
     metadata:
-      namespace: test-ahyeha
+      namespace: dev-ahyeha
       labels:
         app: resourcesmanagement
     spec:
@@ -22,10 +22,10 @@ spec:
           valueFrom:
             secretKeyRef:
               key: password
-              name: mysql-trs-pass
+              name: mysql-drs-pass
         - name: SPRING_DATASOURCE_URL
-          value: jdbc:mysql://trs:$(MYSQL_PASSWORD)@mysql-read/resourcesmanagement_db?useUnicode=true&characterEncoding=utf8&useLegacyDatetimeCode=false&serverTimezone=UTC&createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false      
-        image: jed.ocir.io/axulzqeiw39c/resourcesmanagement:test
+          value: jdbc:mysql://drs:$(MYSQL_PASSWORD)@mysql-read/resourcesmanagement_db?useUnicode=true&characterEncoding=utf8&useLegacyDatetimeCode=false&serverTimezone=UTC&createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false      
+        image: jed.ocir.io/axulzqeiw39c/resourcesmanagement:dev
         name: resourcesmanagement
         ports:
         - containerPort: 5057 
@@ -44,8 +44,8 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: resourcesmanagements-service
-  namespace: test-ahyeha
+  name: resourcesmanagement-service
+  namespace: dev-ahyeha
 spec:
   type: ClusterIP
   ports:
@@ -59,24 +59,24 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: resourcesmanagements-ingress-path
-  namespace: test-ahyeha
+  name: resourcesmanagement-ingress-path
+  namespace: dev-ahyeha
   annotations:
     kubernetes.io/ingress.class: "nginx"
     nginx.ingress.kubernetes.io/rewrite-target: /$2
 spec:
   tls:
     - hosts:
-        - "test.ahyeha.com"
+        - "dev.ahyeha.com"
       secretName: apps-tls
   rules:
-    - host: "test.ahyeha.com"
+    - host: "dev.ahyeha.com"
       http:
         paths:
-          - path: /resourcesmanagements(/|$)(.*)
+          - path: /resourcesmanagement(/|$)(.*)
             pathType: Prefix
             backend:
               service:
-                name: resourcesmanagements-service
+                name: resourcesmanagement-service
                 port:
                   number: 80
