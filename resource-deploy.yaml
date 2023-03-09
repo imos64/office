@@ -17,14 +17,14 @@ spec:
       containers:   
       - env:
         - name: JAVA_OPTS
-            value: -Dspring.profiles.active=prod,api-docs,no-liquibase
+          value: -Dspring.profiles.active=prod,api-docs,no-liquibase
         - name: MYSQL_PASSWORD
           valueFrom:
             secretKeyRef:
               key: password
               name: mysql-trs-pass
         - name: SPRING_DATASOURCE_URL
-          value: jdbc:mysql://rsmg:$(MYSQL_PASSWORD)@mysql-read/resourcesmanagement_db?useUnicode=true&characterEncoding=utf8&useLegacyDatetimeCode=false&serverTimezone=UTC&createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false      
+          value: jdbc:mysql://trs:$(MYSQL_PASSWORD)@mysql-read/resourcesmanagement_db?useUnicode=true&characterEncoding=utf8&useLegacyDatetimeCode=false&serverTimezone=UTC&createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false      
         image: jed.ocir.io/axulzqeiw39c/resourcesmanagement:test
         name: resourcesmanagement
         ports:
