@@ -73,7 +73,7 @@ spec:
     - host: "test.ahyeha.com"
       http:
         paths:
-          - path: /resourcesmanagements(/|$)(.*)
+          - path: /usermanagements(/|$)(.*)
             pathType: Prefix
             backend:
               service:
