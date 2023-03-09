@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: usermanagement-deployment
-  namespace: test-ahyeha
+  namespace: dev-ahyeha
 spec:
   selector:
     matchLabels:
@@ -10,22 +10,22 @@ spec:
   replicas: 1
   template:
     metadata:
-      namespace: test-ahyeha
+      namespace: dev-ahyeha
       labels:
         app: usermanagement
     spec:
       containers:   
       - env:
         - name: JAVA_OPTS
-          value: -Dspring.profiles.active=prod,api-docs,no-liquibase
+            value: -Dspring.profiles.active=prod,api-docs,no-liquibase
         - name: MYSQL_PASSWORD
           valueFrom:
             secretKeyRef:
               key: password
-              name: mysql-tus-pass
+              name: mysql-dus-pass
         - name: SPRING_DATASOURCE_URL
-          value: jdbc:mysql://tus:$(MYSQL_PASSWORD)@mysql-read/usermanagement_db?useUnicode=true&characterEncoding=utf8&useLegacyDatetimeCode=false&serverTimezone=UTC&createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false      
-        image: jed.ocir.io/axulzqeiw39c/usermanagement:test
+          value: jdbc:mysql://dus:$(MYSQL_PASSWORD)@mysql-read/usermanagement_db?useUnicode=true&characterEncoding=utf8&useLegacyDatetimeCode=false&serverTimezone=UTC&createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false      
+        image: jed.ocir.io/axulzqeiw39c/usermanagement:dev
         name: usermanagement
         ports:
         - containerPort: 5055 
@@ -45,7 +45,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: usermanagements-service
-  namespace: test-ahyeha
+  namespace: dev-ahyeha
 spec:
   type: ClusterIP
   ports:
@@ -59,24 +59,24 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: usermanagements-ingress-path
-  namespace: test-ahyeha
+  name: usermanagement-ingress-path
+  namespace: dev-ahyeha
   annotations:
     kubernetes.io/ingress.class: "nginx"
     nginx.ingress.kubernetes.io/rewrite-target: /$2
 spec:
   tls:
     - hosts:
-        - "test.ahyeha.com"
+        - "dev.ahyeha.com"
       secretName: apps-tls
   rules:
-    - host: "test.ahyeha.com"
+    - host: "dev.ahyeha.com"
       http:
         paths:
-          - path: /usermanagements(/|$)(.*)
+          - path: /resourcesmanagement(/|$)(.*)
             pathType: Prefix
             backend:
               service:
-                name: usermanagements-service
+                name: usermanagement-service
                 port:
                   number: 80
