@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: requestmgr-deployment
-  namespace: test-ahyeha
+  namespace: dev-ahyeha
 spec:
   progressDeadlineSeconds: 600
   replicas: 1
@@ -20,7 +20,7 @@ spec:
       creationTimestamp: null
       labels:
         app: requestmgr
-      namespace: test-ahyeha   
+      namespace: dev-ahyeha  
     spec:
       containers:   
       - env:
@@ -30,10 +30,10 @@ spec:
           valueFrom:
             secretKeyRef:
               key: password
-              name: mysql-trq-pass
+              name: mysql-drq-pass
         - name: SPRING_DATASOURCE_URL
-          value: jdbc:mysql://trq:$(MYSQL_PASSWORD)@mysql-read/requestmanager_db?useUnicode=true&characterEncoding=utf8&useLegacyDatetimeCode=false&serverTimezone=UTC&createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false      
-        image: jed.ocir.io/axulzqeiw39c/request-manager:test
+          value: jdbc:mysql://drq:$(MYSQL_PASSWORD)@mysql-read/requestmanager_db?useUnicode=true&characterEncoding=utf8&useLegacyDatetimeCode=false&serverTimezone=UTC&createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false      
+        image: jed.ocir.io/axulzqeiw39c/request-manager:dev
         imagePullPolicy: IfNotPresent
         name: requestmgr
         ports:
@@ -53,8 +53,8 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: requestmgrs-service
-  namespace: test-ahyeha
+  name: requestmgr-service
+  namespace: dev-ahyeha
 spec:
   type: ClusterIP
   ports:
@@ -68,24 +68,24 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: requestmgrs-ingress-path
-  namespace: test-ahyeha
+  name: requestmgr-ingress-path
+  namespace: dev-ahyeha
   annotations:
     kubernetes.io/ingress.class: "nginx"
     nginx.ingress.kubernetes.io/rewrite-target: /$2
 spec:
   tls:
     - hosts:
-        - "test.ahyeha.com"
+        - "dev.ahyeha.com"
       secretName: apps-tls
   rules:
-    - host: "test.ahyeha.com"
+    - host: "dev.ahyeha.com"
       http:
         paths:
-          - path: /request-managers(/|$)(.*)
+          - path: /request-manager(/|$)(.*)
             pathType: Prefix
             backend:
               service:
-                name: requestmgrs-service
+                name: requestmgr-service
                 port:
                   number: 80
