@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: authentication-deployment
-  namespace: test-ahyeha
+  namespace: dev-ahyeha
 spec:
   progressDeadlineSeconds: 600
   replicas: 1
@@ -20,7 +20,7 @@ spec:
       creationTimestamp: null
       labels:
         app: authentication
-      namespace: test-ahyeha   
+      namespace: dev-ahyeha   
     spec:
       containers:   
       - env:
@@ -30,10 +30,10 @@ spec:
           valueFrom:
             secretKeyRef:
               key: password
-              name: mysql-tau-pass
+              name: mysql-dau-pass
         - name: SPRING_DATASOURCE_URL
-          value: jdbc:mysql://tau:$(MYSQL_PASSWORD)@mysql-read/authentication_db?useUnicode=true&characterEncoding=utf8&useLegacyDatetimeCode=false&serverTimezone=UTC&createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false      
-        image: jed.ocir.io/axulzqeiw39c/authentication:test
+          value: jdbc:mysql://dau:$(MYSQL_PASSWORD)@mysql-read/authentication_db?useUnicode=true&characterEncoding=utf8&useLegacyDatetimeCode=false&serverTimezone=UTC&createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false      
+        image: jed.ocir.io/axulzqeiw39c/authentication:dev
         imagePullPolicy: IfNotPresent
         name: authentication
         ports:
@@ -54,7 +54,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: authentications-service
-  namespace: test-ahyeha
+  namespace: dev-ahyeha
 spec:
   type: ClusterIP
   ports:
@@ -63,3 +63,29 @@ spec:
     targetPort: 5054
   selector:
     app: authentication
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: authentications-ingress-path
+  namespace: dev-ahyeha
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  tls:
+    - hosts:
+        - "dev.ahyeha.com"
+      secretName: apps-tls
+  rules:
+    - host: "dev.ahyeha.com"
+      http:
+        paths:
+          - path: /authentications(/|$)(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: authentications-service
+                port:
+                  number: 80
