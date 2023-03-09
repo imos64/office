@@ -17,7 +17,7 @@ spec:
       containers:   
       - env:
         - name: JAVA_OPTS
-            value: -Dspring.profiles.active=prod,api-docs,no-liquibase
+          value: -Dspring.profiles.active=prod,api-docs,no-liquibase
         - name: MYSQL_PASSWORD
           valueFrom:
             secretKeyRef:
