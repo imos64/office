@@ -32,7 +32,7 @@ spec:
               key: password
               name: mysql-trq-pass
         - name: SPRING_DATASOURCE_URL
-          value: jdbc:mysql://tau:$(MYSQL_PASSWORD)@mysql-read/requestmanager_db?useUnicode=true&characterEncoding=utf8&useLegacyDatetimeCode=false&serverTimezone=UTC&createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false      
+          value: jdbc:mysql://trq:$(MYSQL_PASSWORD)@mysql-read/requestmanager_db?useUnicode=true&characterEncoding=utf8&useLegacyDatetimeCode=false&serverTimezone=UTC&createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false      
         image: jed.ocir.io/axulzqeiw39c/request-manager:test
         imagePullPolicy: IfNotPresent
         name: requestmgr
