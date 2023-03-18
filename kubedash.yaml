@@ -3,14 +3,6 @@ kind: ServiceAccount
 metadata:
   name: admin-user
   namespace: kubernetes-dashboard
-spec:
-  type: ClusterIP
-  ports:
-  - port: 80
-    protocol: TCP
-    targetPort: 80 
-  selector:
-    k8s-app: dashboard-metrics-scraper
     
 ---
 
