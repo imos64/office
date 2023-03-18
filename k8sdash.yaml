@@ -1,71 +1,7 @@
-apiVersion: v1
-items:
-- apiVersion: v1
-  kind: Service
-  metadata:
-    annotations:
-      kubectl.kubernetes.io/last-applied-configuration: |
-        {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"labels":{"k8s-app":"dashboard-metrics-scraper"},"name":"dashboard-metrics-scraper","namespace":"kubernetes-dashboard"},"spec":{"ports":[{"port":8000,"targetPort":8000}],"selector":{"k8s-app":"dashboard-metrics-scraper"}}}
-    creationTimestamp: "2023-03-18T03:13:05Z"
-    labels:
-      k8s-app: dashboard-metrics-scraper
-    name: dashboard-metrics-scraper
-    namespace: kubernetes-dashboard
-    resourceVersion: "57882165"
-    uid: 335bca8e-0bef-4789-ae4b-65c9450b4e24
-  spec:
-    clusterIP: 10.96.27.59
-    clusterIPs:
-    - 10.96.27.59
-    internalTrafficPolicy: Cluster
-    ipFamilies:
-    - IPv4
-    ipFamilyPolicy: SingleStack
-    ports:
-    - port: 8000
-      protocol: TCP
-      targetPort: 8000
-    selector:
-      k8s-app: dashboard-metrics-scraper
-    sessionAffinity: None
-    type: ClusterIP
-  status:
-    loadBalancer: {}
-- apiVersion: v1
-  kind: Service
-  metadata:
-    annotations:
-      kubectl.kubernetes.io/last-applied-configuration: |
-        {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"labels":{"k8s-app":"kubernetes-dashboard"},"name":"kubernetes-dashboard","namespace":"kubernetes-dashboard"},"spec":{"ports":[{"port":443,"targetPort":8443}],"selector":{"k8s-app":"kubernetes-dashboard"}}}
-    creationTimestamp: "2023-03-18T03:13:04Z"
-    labels:
-      k8s-app: kubernetes-dashboard
-    name: kubernetes-dashboard
-    namespace: kubernetes-dashboard
-    resourceVersion: "57882150"
-    uid: 4aed1b7c-a21e-4c47-8051-ffaaf16a3549
-  spec:
-    clusterIP: 10.96.252.214
-    clusterIPs:
-    - 10.96.252.214
-    internalTrafficPolicy: Cluster
-    ipFamilies:
-    - IPv4
-    ipFamilyPolicy: SingleStack
-    ports:
-    - port: 80
-      protocol: TCP
-      targetPort: 8443
-    selector:
-      k8s-app: kubernetes-dashboard
-    sessionAffinity: None
-    type: ClusterIP
-
----
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: kubernetes-dashboard-ingress-path
+  name: dashboard
   annotations:
     kubernetes.io/ingress.class: "nginx"
     nginx.ingress.kubernetes.io/rewrite-target: /$2
@@ -84,4 +20,4 @@ spec:
               service:
                 name: kubernetes-dashboard
                 port:
-                  number: 80
+                  number: 443
