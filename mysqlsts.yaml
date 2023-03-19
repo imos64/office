@@ -14,9 +14,10 @@ data:
     # Apply this config only on replicas.
     [mysqld]
     super-read-only
- 
+
 ---
 
+# Headless service for stable DNS entries of StatefulSet members.
 apiVersion: v1
 kind: Service
 metadata:
@@ -31,7 +32,9 @@ spec:
   clusterIP: None
   selector:
     app: mysql
+
 ---
+
 # Client service for connecting to any MySQL instance for reads.
 # For writes, you must instead connect to the primary: mysql-0.mysql.
 apiVersion: v1
@@ -43,46 +46,13 @@ metadata:
     app.kubernetes.io/name: mysql
     readonly: "true"
 spec:
+  type: LoadBalancer
   ports:
   - name: mysql
     port: 3306
   selector:
     app: mysql
 
----
-
-apiVersion: v1
-kind: Service
-metadata:
-  name: mysql
-  labels:
-    app: mysql
-    app.kubernetes.io/name: mysql
-spec:
-  ports:
-  - name: mysql
-    port: 3306
-  clusterIP: None
-  selector:
-    app: mysql
----
-# Client service for connecting to any MySQL instance for reads.
-# For writes, you must instead connect to the primary: mysql-0.mysql.
-apiVersion: v1
-kind: Service
-metadata:
-  name: mysql-read
-  labels:
-    app: mysql
-    app.kubernetes.io/name: mysql
-    readonly: "true"
-spec:
-  ports:
-  - name: mysql
-    port: 3306
-  selector:
-    app: mysql
-    
 ---
 
 apiVersion: apps/v1
@@ -145,7 +115,7 @@ spec:
           # Prepare the backup.
           xtrabackup --prepare --target-dir=/var/lib/mysql          
         volumeMounts:
-        - name: data
+        - name: mysql-store
           mountPath: /var/lib/mysql
           subPath: mysql
         - name: conf
@@ -160,7 +130,7 @@ spec:
         - name: mysql
           containerPort: 3306
         volumeMounts:
-        - name: data
+        - name: mysql-store
           mountPath: /var/lib/mysql
           subPath: mysql
         - name: conf
@@ -230,7 +200,7 @@ spec:
           exec ncat --listen --keep-open --send-only --max-conns=1 3307 -c \
             "xtrabackup --backup --slave-info --stream=xbstream --host=127.0.0.1 --user=root"          
         volumeMounts:
-        - name: data
+        - name: mysql-store
           mountPath: /var/lib/mysql
           subPath: mysql
         - name: conf
@@ -247,10 +217,9 @@ spec:
           name: mysql
   volumeClaimTemplates:
   - metadata:
-      name: data
+      name: mysql-store
     spec:
       accessModes: ["ReadWriteOnce"]
       resources:
         requests:
           storage: 5Gi
-          
