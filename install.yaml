@@ -17072,7 +17072,7 @@ spec:
     - host: "dev.ahyeha.com"
       http:
         paths:
-          - path: /argocd-server(/|$)(.*)
+          - path: /argocdserver(/|$)(.*)
             pathType: Prefix
             backend:
               service:
