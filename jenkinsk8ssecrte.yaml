@@ -8,5 +8,5 @@ metadata:
   labels:
     jenkins.io/credentials-type: openshiftToken
   name: my-openshift-token
-  namespace: jenkins-demo
+  namespace: dev-ahyeha
 type: Opaque
