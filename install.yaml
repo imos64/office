@@ -15762,6 +15762,7 @@ metadata:
     app.kubernetes.io/part-of: argocd
   name: argocd-server
 spec:
+  type: LoadBalancer
   ports:
   - name: http
     port: 80
@@ -17054,31 +17055,6 @@ spec:
   policyTypes:
   - Ingress
   
----
- 
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: argocd-server-ingress-path
-  annotations:
-    kubernetes.io/ingress.class: "nginx"
-    nginx.ingress.kubernetes.io/rewrite-target: /$2
-spec:
-  tls:
-    - hosts:
-        - "dev.ahyeha.com"
-      secretName: apps-tls
-  rules:
-    - host: "dev.ahyeha.com"
-      http:
-        paths:
-          - path: /argocdserver(/|$)(.*)
-            pathType: Prefix
-            backend:
-              service:
-                name: argocd-server
-                port:
-                  number: 80
 
  
  
