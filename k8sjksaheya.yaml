@@ -1,0 +1,12 @@
+apiVersion: v1
+data:
+  text: c3VwZXJkdXBlcnNlY3JldA==
+kind: Secret
+metadata:
+  annotations:
+    jenkins.io/credentials-description: The Openshift token to access the cluster
+  labels:
+    jenkins.io/credentials-type: openshiftToken
+  name: my-openshift-token
+  namespace: dev-ahyeha
+type: Opaque
